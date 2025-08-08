@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tanki Admin Panel</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Login Screen -->
+        <div id="login-screen" class="login-container">
+            <div class="login-box">
+                <div class="login-header">
+                    <i class="fas fa-shield-alt"></i>
+                    <h1>Tanki Admin Panel</h1>
+                    <p>Secure access to server management</p>
+                </div>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Sign In
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main Dashboard -->
+        <div id="dashboard" class="dashboard hidden">
+            <!-- Sidebar -->
+            <nav class="sidebar">
+                <div class="sidebar-header">
+                    <h2><i class="fas fa-cog"></i> Admin Panel</h2>
+                </div>
+                <ul class="sidebar-menu">
+                    <li class="active" data-section="overview">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Overview</span>
+                    </li>
+                    <li data-section="players">
+                        <i class="fas fa-users"></i>
+                        <span>Players</span>
+                    </li>
+                    <li data-section="servers">
+                        <i class="fas fa-server"></i>
+                        <span>Servers</span>
+                    </li>
+                    <li data-section="resources">
+                        <i class="fas fa-box"></i>
+                        <span>Resources</span>
+                    </li>
+                    <li data-section="battles">
+                        <i class="fas fa-crosshairs"></i>
+                        <span>Battles</span>
+                    </li>
+                    <li data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </li>
+                </ul>
+                <div class="sidebar-footer">
+                    <button id="logout-btn" class="btn-logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <header class="top-bar">
+                    <div class="top-bar-left">
+                        <button class="menu-toggle">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <h1 id="section-title">Dashboard Overview</h1>
+                    </div>
+                    <div class="top-bar-right">
+                        <div class="user-info">
+                            <span id="username-display">Admin</span>
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Overview Section -->
+                <section id="overview-section" class="content-section">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="online-players">0</h3>
+                                <p>Online Players</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-server"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="active-servers">0</h3>
+                                <p>Active Servers</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-gamepad"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="active-battles">0</h3>
+                                <p>Active Battles</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3 id="server-uptime">0%</h3>
+                                <p>Server Uptime</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="charts-grid">
+                        <div class="chart-container">
+                            <h3>Player Activity</h3>
+                            <canvas id="playerChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Server Performance</h3>
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="recent-activity">
+                        <h3>Recent Activity</h3>
+                        <div id="activity-log" class="activity-list">
+                            <!-- Activity items will be populated here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Players Section -->
+                <section id="players-section" class="content-section hidden">
+                    <div class="section-header">
+                        <h2>Player Management</h2>
+                        <div class="section-actions">
+                            <input type="text" id="player-search" placeholder="Search players...">
+                            <button class="btn-primary" onclick="openAddPlayerModal()">
+                                <i class="fas fa-plus"></i> Add Player
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table id="players-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>Rank</th>
+                                    <th>Status</th>
+                                    <th>Last Seen</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="players-tbody">
+                                <!-- Players will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Servers Section -->
+                <section id="servers-section" class="content-section hidden">
+                    <div class="section-header">
+                        <h2>Server Management</h2>
+                        <div class="section-actions">
+                            <button class="btn-primary" onclick="refreshServers()">
+                                <i class="fas fa-sync"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div id="servers-grid" class="servers-grid">
+                        <!-- Server cards will be populated here -->
+                    </div>
+                </section>
+
+                <!-- Resources Section -->
+                <section id="resources-section" class="content-section hidden">
+                    <div class="section-header">
+                        <h2>Resource Management</h2>
+                        <div class="section-actions">
+                            <button class="btn-primary" onclick="loadResources()">
+                                <i class="fas fa-sync"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div class="resources-container">
+                        <div id="resources-list" class="resources-grid">
+                            <!-- Resources will be populated here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Battles Section -->
+                <section id="battles-section" class="content-section hidden">
+                    <div class="section-header">
+                        <h2>Battle Management</h2>
+                        <div class="section-actions">
+                            <button class="btn-primary" onclick="loadBattles()">
+                                <i class="fas fa-sync"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table id="battles-table">
+                            <thead>
+                                <tr>
+                                    <th>Battle ID</th>
+                                    <th>Map</th>
+                                    <th>Players</th>
+                                    <th>Mode</th>
+                                    <th>Status</th>
+                                    <th>Duration</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="battles-tbody">
+                                <!-- Battles will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Settings Section -->
+                <section id="settings-section" class="content-section hidden">
+                    <div class="section-header">
+                        <h2>Server Settings</h2>
+                    </div>
+                    <div class="settings-container">
+                        <div class="settings-group">
+                            <h3>General Settings</h3>
+                            <div class="setting-item">
+                                <label>Server Name</label>
+                                <input type="text" id="server-name" value="Tanki Server">
+                            </div>
+                            <div class="setting-item">
+                                <label>Max Players</label>
+                                <input type="number" id="max-players" value="100">
+                            </div>
+                            <div class="setting-item">
+                                <label>Server Port</label>
+                                <input type="number" id="server-port" value="8080">
+                            </div>
+                        </div>
+                        <div class="settings-group">
+                            <h3>Security Settings</h3>
+                            <div class="setting-item">
+                                <label>Enable Anti-Cheat</label>
+                                <input type="checkbox" id="enable-anticheat" checked>
+                            </div>
+                            <div class="setting-item">
+                                <label>Enable Logging</label>
+                                <input type="checkbox" id="enable-logging" checked>
+                            </div>
+                        </div>
+                        <button class="btn-primary" onclick="saveSettings()">
+                            <i class="fas fa-save"></i> Save Settings
+                        </button>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="player-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Player Details</h2>
+            <div id="player-details">
+                <!-- Player details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
